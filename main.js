@@ -39,7 +39,6 @@ class Field {
 				this.askLocation();
 				break;
 		}
-		console.log(this.playerLocation);
 	}
 
 	testLocation() {
@@ -74,12 +73,47 @@ class Field {
 			this.testLocation();
 		}
 	}
+
+	static generateField(height, width) {
+		let arr = [];
+		let matriz = [];
+		let randomHeight;
+		let randomWidth;
+
+		// Creating plain field
+
+		for (let i = 0; i < width; i++) {
+			arr.push(fieldCharacter);
+		}
+		for (let i = 0; i < height; i++) {
+			matriz.push([...arr]);
+		}
+
+		//Creating random start point and hat and validating they are not the same place
+
+		randomHeight = Math.floor(Math.random() * height);
+		randomWidth = Math.floor(Math.random() * width);
+		matriz[randomHeight][randomWidth] = pathCharacter;
+
+		while (matriz[randomHeight][randomHeight] == pathCharacter) {
+			randomHeight = Math.floor(Math.random() * height);
+			randomWidth = Math.floor(Math.random() * width);
+		}
+
+		matriz[randomHeight][randomWidth] = hat;
+
+		return matriz;
+		//console.log(matriz);
+	}
+
+	static startGame() {
+		//let height = prompt('height: ');
+		//let width = prompt('width: ');
+
+		const game = new Field(Field.generateField(height, width));
+
+		game.loopGame();
+	}
 }
 
-const myField = new Field([
-	['*', '░', '░'],
-	['░', 'O', '░'],
-	['░', '^', '░'],
-]);
-
-myField.loopGame();
+Field.startGame();
