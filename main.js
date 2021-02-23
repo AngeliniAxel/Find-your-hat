@@ -20,8 +20,9 @@ class Field {
 	}
 
 	askLocation() {
-		const location = prompt('Wich way? ');
-		switch (location) {
+		let location = prompt('Wich way? ');
+
+		switch (location.toLowerCase()) {
 			case 'u':
 				this.playerLocation[0]--;
 				break;
@@ -129,6 +130,42 @@ class Field {
 		return matriz;
 	}
 
+	canFieldBeSolved() {
+		let coordinates = this.playerLocation.slice();
+		let startTime = Date.now();
+		let i = 0;
+
+		do {
+			let destination = coordinates.slice();
+			let randomDirection = Math.floor(Math.random() * 4);
+
+			switch (randomDirection) {
+				case 1:
+					destination[0]++;
+					break;
+				case 2:
+					destination[0]--;
+					break;
+				case 3:
+					destination[1]++;
+					break;
+				case 4:
+					destination[1]--;
+					break;
+			}
+			if (this.field[destination[0]][destination[1]] === hat) {
+				return true;
+			} else if (
+				this.field[destination[0]][destination[1]] === fieldCharacter ||
+				this.field[destination[0]][destination[1]] === pathCharacter
+			) {
+				coordinates = destination;
+				i++;
+			}
+		} while (i < 100000);
+		return false;
+	}
+
 	static startGame() {
 		let height;
 		let width;
@@ -161,8 +198,9 @@ class Field {
 				break;
 		}
 
-		const game = new Field(Field.generateField(height, width, difficulty));
+		let game = new Field(Field.generateField(height, width, difficulty));
 		game.locatePlayer();
+		//game.canBeSolved();
 		game.loopGame();
 	}
 }
