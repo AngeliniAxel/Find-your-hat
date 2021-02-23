@@ -8,7 +8,7 @@ const pathCharacter = '*';
 class Field {
 	constructor(field) {
 		this.field = field;
-		this.playerLocation = [0, 0];
+		this.playerLocation = new Array();
 		this.stopGame = false;
 	}
 
@@ -74,7 +74,18 @@ class Field {
 		}
 	}
 
-	static generateField(height, width) {
+	locatePlayer() {
+		for (let i = 0; i < this.field.length; i++) {
+			for (let j = 0; j < this.field[i].length; j++) {
+				if (this.field[i][j] == pathCharacter) {
+					this.playerLocation.push(i);
+					this.playerLocation.push(j);
+				}
+			}
+		}
+	}
+
+	static generateField(height, width, difficulty) {
 		let arr = [];
 		let matriz = [];
 		let randomHeight;
@@ -95,23 +106,63 @@ class Field {
 		randomWidth = Math.floor(Math.random() * width);
 		matriz[randomHeight][randomWidth] = pathCharacter;
 
-		while (matriz[randomHeight][randomHeight] == pathCharacter) {
+		while (matriz[randomHeight][randomWidth] === pathCharacter) {
 			randomHeight = Math.floor(Math.random() * height);
 			randomWidth = Math.floor(Math.random() * width);
 		}
 
 		matriz[randomHeight][randomWidth] = hat;
 
+		for (let i = 0; i < difficulty; i++) {
+			while (
+				matriz[randomHeight][randomWidth] == pathCharacter ||
+				matriz[randomHeight][randomWidth] == hat ||
+				matriz[randomHeight][randomWidth] == hole
+			) {
+				randomHeight = Math.floor(Math.random() * height);
+				randomWidth = Math.floor(Math.random() * width);
+			}
+
+			matriz[randomHeight][randomWidth] = hole;
+		}
+
 		return matriz;
-		//console.log(matriz);
 	}
 
 	static startGame() {
-		//let height = prompt('height: ');
-		//let width = prompt('width: ');
+		let height;
+		let width;
+		let difficulty;
 
-		const game = new Field(Field.generateField(height, width));
+		let choice = prompt('Select level of difficulty (1 - 2 - 3): ');
 
+		while (choice != '1' && choice != '2' && choice != '3') {
+			choice = prompt('Ouch! You have to select one of these three levels (1 - 2 - 3): ');
+		}
+
+		switch (choice) {
+			case '1':
+				console.log('-- EASY MODE --');
+				height = 3;
+				width = 3;
+				difficulty = 2;
+				break;
+			case '2':
+				console.log('-- NORMAL MODE --');
+				height = 4;
+				width = 4;
+				difficulty = 5;
+				break;
+			case '3':
+				console.log('-- HARD MODE --');
+				height = 5;
+				width = 5;
+				difficulty = 10;
+				break;
+		}
+
+		const game = new Field(Field.generateField(height, width, difficulty));
+		game.locatePlayer();
 		game.loopGame();
 	}
 }
