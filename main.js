@@ -179,7 +179,7 @@ class Field {
 				coordinates = destination;
 				i++;
 			}
-		} while (i < 100000);
+		} while (i < 10000);
 		return false;
 	}
 
