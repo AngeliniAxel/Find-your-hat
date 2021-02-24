@@ -146,19 +146,19 @@ class Field {
 
 		do {
 			let destination = coordinates.slice();
-			let randomDirection = Math.floor(Math.random() * 5);
+			let randomDirection = Math.floor(Math.random() * 4);
 
 			switch (randomDirection) {
-				case 1:
+				case 0:
 					destination[0]++;
 					break;
-				case 2:
+				case 1:
 					destination[0]--;
 					break;
-				case 3:
+				case 2:
 					destination[1]++;
 					break;
-				case 4:
+				case 3:
 					destination[1]--;
 					break;
 			}
@@ -176,7 +176,7 @@ class Field {
 				this.field[destination[0]][destination[1]] === fieldCharacter ||
 				this.field[destination[0]][destination[1]] === pathCharacter
 			) {
-				coordinates = destination.slice();
+				coordinates = destination;
 				i++;
 			}
 		} while (i < 100000);
@@ -229,7 +229,7 @@ class Field {
 		let game = new Field(Field.generateField(arr[0], arr[1], arr[2]));
 		game.locatePlayer();
 
-		if (game.canFieldBeSolved()) {
+		if (!game.canFieldBeSolved()) {
 			Field.startGame(arr);
 		}
 		return game;
