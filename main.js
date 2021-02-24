@@ -12,6 +12,7 @@ class Field {
 		this.stopGame = false;
 	}
 
+	//Check player location on the field and prints it
 	print() {
 		this.field[this.playerLocation[0]][this.playerLocation[1]] = pathCharacter;
 		for (let i = 0; i < this.field.length; i++) {
@@ -19,6 +20,7 @@ class Field {
 		}
 	}
 
+	//ask direction and updates playerLocation
 	askLocation() {
 		let location = prompt('Wich way? ');
 
@@ -42,6 +44,7 @@ class Field {
 		}
 	}
 
+	//check what is the location and stop the game if neccesary
 	testLocation() {
 		if (
 			this.playerLocation[1] < 0 ||
@@ -67,6 +70,7 @@ class Field {
 		}
 	}
 
+	//loops the game until its finished
 	loopGame() {
 		while (!this.stopGame) {
 			this.print();
@@ -75,6 +79,7 @@ class Field {
 		}
 	}
 
+	//looks for the starting point and save it in the object`s attribute
 	locatePlayer() {
 		for (let i = 0; i < this.field.length; i++) {
 			for (let j = 0; j < this.field[i].length; j++) {
@@ -86,6 +91,7 @@ class Field {
 		}
 	}
 
+	//Is used as the constructor`s parameter
 	static generateField(height, width, difficulty) {
 		let arr = [];
 		let matriz = [];
@@ -114,6 +120,7 @@ class Field {
 
 		matriz[randomHeight][randomWidth] = hat;
 
+		//Randomly assigning number of holes based on difficulty
 		for (let i = 0; i < difficulty; i++) {
 			while (
 				matriz[randomHeight][randomWidth] == pathCharacter ||
@@ -130,13 +137,16 @@ class Field {
 		return matriz;
 	}
 
+	/* Checks if the maze cab be solved based on random mouse Random mouse algorithm, 
+	if there are 100,000 movements and it has not been resolved yet, it will validate it as false */
+
 	canFieldBeSolved() {
 		let coordinates = this.playerLocation.slice();
 		let i = 0;
 
 		do {
 			let destination = coordinates.slice();
-			let randomDirection = Math.floor(Math.random() * 4);
+			let randomDirection = Math.floor(Math.random() * 5);
 
 			switch (randomDirection) {
 				case 1:
@@ -166,13 +176,14 @@ class Field {
 				this.field[destination[0]][destination[1]] === fieldCharacter ||
 				this.field[destination[0]][destination[1]] === pathCharacter
 			) {
-				coordinates = destination;
+				coordinates = destination.slice();
 				i++;
 			}
 		} while (i < 100000);
 		return false;
 	}
 
+	//Ask for level and returns an array with height, width and number of holes based on difficulty
 	static askLevel() {
 		let height;
 		let width;
@@ -201,7 +212,7 @@ class Field {
 				console.log('-- HARD MODE --');
 				height = 5;
 				width = 5;
-				difficulty = 10;
+				difficulty = 12;
 				break;
 		}
 
@@ -213,11 +224,12 @@ class Field {
 		return arr;
 	}
 
+	//Creats an obj with random field, it calls recursivity if the maze cannot be solved
 	static startGame(arr) {
 		let game = new Field(Field.generateField(arr[0], arr[1], arr[2]));
 		game.locatePlayer();
 
-		if (!game.canFieldBeSolved()) {
+		if (game.canFieldBeSolved()) {
 			Field.startGame(arr);
 		}
 		return game;
@@ -226,5 +238,5 @@ class Field {
 
 const arr = Field.askLevel();
 
-const game = Field.startGame(arr);
+let game = Field.startGame(arr);
 game.loopGame();
