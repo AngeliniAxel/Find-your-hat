@@ -132,7 +132,6 @@ class Field {
 
 	canFieldBeSolved() {
 		let coordinates = this.playerLocation.slice();
-		let startTime = Date.now();
 		let i = 0;
 
 		do {
@@ -153,7 +152,15 @@ class Field {
 					destination[1]--;
 					break;
 			}
-			if (this.field[destination[0]][destination[1]] === hat) {
+			if (
+				destination[0] <= -1 ||
+				destination[1] <= -1 ||
+				this.field[destination[0]] === undefined ||
+				this.field[destination[0]][destination[1]] === undefined ||
+				this.field[destination[0]][destination[1]] === hole
+			) {
+				i++;
+			} else if (this.field[destination[0]][destination[1]] === hat) {
 				return true;
 			} else if (
 				this.field[destination[0]][destination[1]] === fieldCharacter ||
@@ -166,7 +173,7 @@ class Field {
 		return false;
 	}
 
-	static startGame() {
+	static askLevel() {
 		let height;
 		let width;
 		let difficulty;
@@ -198,11 +205,26 @@ class Field {
 				break;
 		}
 
-		let game = new Field(Field.generateField(height, width, difficulty));
+		let arr = [];
+		arr.push(height);
+		arr.push(width);
+		arr.push(difficulty);
+
+		return arr;
+	}
+
+	static startGame(arr) {
+		let game = new Field(Field.generateField(arr[0], arr[1], arr[2]));
 		game.locatePlayer();
-		//game.canBeSolved();
-		game.loopGame();
+
+		if (!game.canFieldBeSolved()) {
+			Field.startGame(arr);
+		}
+		return game;
 	}
 }
 
-Field.startGame();
+const arr = Field.askLevel();
+
+const game = Field.startGame(arr);
+game.loopGame();
